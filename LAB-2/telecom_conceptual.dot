@@ -1,0 +1,21 @@
+digraph G { graph [rankdir=TB, bgcolor="white", nodesep=0.6, ranksep=0.7, pad=0.35]; node [fontname="DejaVu Sans", shape=box, style="rounded,filled", fillcolor="#e4efff", color="#4778b5", fontsize=13]; edge [fontname="DejaVu Sans",fontsize=11,color="#60758d",dir=none];
+subscriber [label="subscriber\nsubscriber_id [key]\nfull_name\nphone_number\nemail (optional)\nregistered_on"];
+tariff [label="tariff\ntariff_id [key]\ntariff_name\nmonthly_fee\nspeed_mbps\nis_active"];
+contract [label="contract\ncontract_id [key]\ncontract_number\nservice_address\nstarts_on\nends_on (optional)\nstatus"];
+service [label="service\nservice_id [key]\nservice_name\nmonthly_fee\ndescription"];
+contract_service [label="contract_service\ncontract_service_id [key]\nactivated_on\ndeactivated_on (optional)"];
+payment [label="payment\npayment_id [key]\npaid_at\namount\npayment_method\nreference_code"];
+support_ticket [label="support_ticket\nticket_id [key]\nopened_at\nsubject\ndescription\nstatus\nclosed_at (optional)"];
+rel0 [shape=diamond,fillcolor="#ffe5c9",label="укладає"];
+subscriber -> rel0 [label="1"]; rel0 -> contract [label="N"];
+rel1 [shape=diamond,fillcolor="#ffe5c9",label="визначає тариф"];
+tariff -> rel1 [label="1"]; rel1 -> contract [label="N"];
+rel2 [shape=diamond,fillcolor="#ffe5c9",label="містить підключення"];
+contract -> rel2 [label="1"]; rel2 -> contract_service [label="N"];
+rel3 [shape=diamond,fillcolor="#ffe5c9",label="надається як"];
+service -> rel3 [label="1"]; rel3 -> contract_service [label="N"];
+rel4 [shape=diamond,fillcolor="#ffe5c9",label="має платіж"];
+contract -> rel4 [label="1"]; rel4 -> payment [label="N"];
+rel5 [shape=diamond,fillcolor="#ffe5c9",label="має звернення"];
+contract -> rel5 [label="1"]; rel5 -> support_ticket [label="N"];
+}
