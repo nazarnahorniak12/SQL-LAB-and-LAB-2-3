@@ -1,94 +1,105 @@
-# Лабораторна робота №3
-## Фізична модель: оператор телекомунікацій
+# Лабораторна робота 3
+## Фізична модель бази даних company
 
 ### Мета
-Перетворити логічну модель ЛР №2 у таблиці з типами, ключами та обмеженнями; підготувати SQL-скрипт.
+Перетворити логічну модель з лабораторної №2 на фізичну модель: визначити таблиці, типи даних, PK, FK, обов’язковість полів, індекси та створити SQL-скрипт.
 
-### Фізична діаграма
-![Фізична модель](telecom_operator_physical.drawio.png)
+### Результат
+Створено **5 таблиць**, **38 стовпців** та **5 зовнішніх ключів**. СУБД — MySQL 8.0.16+; рушій InnoDB; кодування utf8mb4; зіставлення utf8mb4_unicode_ci.
 
-[Редагований draw.io](telecom_operator_physical.drawio) · [Створення бази SQL](telecom_operator.sql) · [Тестові дані](demo_data.sql) · [Запити](queries.sql)
+![Фізична модель](company_physical.drawio.png)
 
-PK — первинний ключ; FK — зовнішній ключ; NN — NOT NULL; AI — AUTO_INCREMENT; UQ — UNIQUE. NULL позначає необов’язкове поле.
+[Файл draw.io](company_physical.drawio) · [SQL-скрипт](company.sql) · [DBML-модель](company.dbml)
 
-### СУБД та типи
-MySQL 8.0.16+ / InnoDB / utf8mb4. INT — ідентифікатори і швидкість; VARCHAR — тексти та телефони; DECIMAL — суми в гривнях; DATE — дати; DATETIME — дата й час (домовленість: UTC). BOOLEAN у MySQL реалізується через TINYINT; CHECK обмежує значення 0/1. Часові дані вводяться застосунком.
+Діаграма містить усі стовпці, фізичні типи та позначення PK/FK/NN/NULL/AI. Стрілки йдуть від FK до батьківського PK. Для необов’язкового FK батьківський запис може бути відсутній; цифри N і 1 показують максимальну кратність.
 
-### Повний словник даних
-| Таблиця | Поле | Тип | Ключ | Обмеження |
+### Специфікація стовпців
+| Таблиця | Поле | Тип | Ключ | Обов’язковість / значення за замовчуванням |
 |---|---|---|---|---|
-| subscriber | subscriber_id | INT | PK  | NOT NULL AUTO_INCREMENT |
-| subscriber | full_name | VARCHAR(120) |  | NOT NULL |
-| subscriber | phone_number | VARCHAR(20) |  | NOT NULL |
-| subscriber | email | VARCHAR(254) |  | NULL |
-| subscriber | registered_on | DATE |  | NOT NULL |
-| tariff | tariff_id | INT | PK  | NOT NULL AUTO_INCREMENT |
-| tariff | tariff_name | VARCHAR(80) |  | NOT NULL |
-| tariff | monthly_fee | DECIMAL(12,2) |  | NOT NULL |
-| tariff | speed_mbps | INT |  | NOT NULL |
-| tariff | is_active | BOOLEAN |  | NOT NULL DEFAULT TRUE |
-| contract | contract_id | INT | PK  | NOT NULL AUTO_INCREMENT |
-| contract | subscriber_id | INT | FK | NOT NULL |
-| contract | tariff_id | INT | FK | NOT NULL |
-| contract | contract_number | VARCHAR(30) |  | NOT NULL |
-| contract | service_address | VARCHAR(200) |  | NOT NULL |
-| contract | starts_on | DATE |  | NOT NULL |
-| contract | ends_on | DATE |  | NULL |
-| contract | status | VARCHAR(15) |  | NOT NULL DEFAULT 'active' |
-| service | service_id | INT | PK  | NOT NULL AUTO_INCREMENT |
-| service | service_name | VARCHAR(80) |  | NOT NULL |
-| service | monthly_fee | DECIMAL(12,2) |  | NOT NULL |
-| service | description | VARCHAR(300) |  | NOT NULL |
-| contract_service | contract_service_id | INT | PK  | NOT NULL AUTO_INCREMENT |
-| contract_service | contract_id | INT | FK | NOT NULL |
-| contract_service | service_id | INT | FK | NOT NULL |
-| contract_service | activated_on | DATE |  | NOT NULL |
-| contract_service | deactivated_on | DATE |  | NULL |
-| payment | payment_id | INT | PK  | NOT NULL AUTO_INCREMENT |
-| payment | contract_id | INT | FK | NOT NULL |
-| payment | paid_at | DATETIME |  | NOT NULL |
-| payment | amount | DECIMAL(12,2) |  | NOT NULL |
-| payment | payment_method | VARCHAR(15) |  | NOT NULL |
-| payment | reference_code | VARCHAR(80) |  | NOT NULL |
-| support_ticket | ticket_id | INT | PK  | NOT NULL AUTO_INCREMENT |
-| support_ticket | contract_id | INT | FK | NOT NULL |
-| support_ticket | opened_at | DATETIME |  | NOT NULL |
-| support_ticket | subject | VARCHAR(150) |  | NOT NULL |
-| support_ticket | description | VARCHAR(1000) |  | NOT NULL |
-| support_ticket | status | VARCHAR(15) |  | NOT NULL DEFAULT 'open' |
-| support_ticket | closed_at | DATETIME |  | NULL |
+| department | department_id | INT | PK  | NOT NULL AUTO_INCREMENT |
+| department | department_name | VARCHAR(30) |  | NOT NULL |
+| department | city | VARCHAR(30) |  | NOT NULL DEFAULT 'Lviv' |
+| department | street | VARCHAR(40) |  | NOT NULL |
+| department | building_no | INT |  | NULL |
+| employee | employee_id | INT | PK  | NOT NULL AUTO_INCREMENT |
+| employee | user_name | VARCHAR(30) |  | NOT NULL |
+| employee | first_name | VARCHAR(30) |  | NOT NULL |
+| employee | last_name | VARCHAR(30) |  | NOT NULL |
+| employee | position | VARCHAR(30) |  | NOT NULL |
+| employee | employment_date | DATE |  | NOT NULL |
+| employee | department_id | INT | FK  | NULL |
+| employee | manager_id | INT | FK  | NULL |
+| employee | rate | DECIMAL(12,2) |  | NOT NULL |
+| employee | bonus | DECIMAL(12,2) |  | NULL |
+| customer | customer_id | INT | PK  | NOT NULL AUTO_INCREMENT |
+| customer | first_name | VARCHAR(30) |  | NOT NULL |
+| customer | last_name | VARCHAR(30) |  | NOT NULL |
+| customer | genger | CHAR(1) |  | NOT NULL |
+| customer | birth_date | DATE |  | NOT NULL |
+| customer | phone_number | VARCHAR(20) |  | NOT NULL |
+| customer | email | VARCHAR(254) |  | NOT NULL |
+| customer | discount | DECIMAL(5,2) |  | NULL |
+| product | product_id | INT | PK  | NOT NULL AUTO_INCREMENT |
+| product | product_name | VARCHAR(100) |  | NOT NULL |
+| product | product_description | VARCHAR(500) |  | NOT NULL |
+| product | category | VARCHAR(50) |  | NOT NULL |
+| product | manufacture | VARCHAR(100) |  | NOT NULL |
+| product | product_type | VARCHAR(50) |  | NOT NULL |
+| product | amount | INT |  | NOT NULL DEFAULT 0 |
+| product | price | DECIMAL(12,2) |  | NOT NULL |
+| orders | orders_id | INT | PK  | NOT NULL AUTO_INCREMENT |
+| orders | employee_id | INT | FK  | NOT NULL |
+| orders | product_id | INT | FK  | NOT NULL |
+| orders | customer_id | INT | FK  | NOT NULL |
+| orders | transaction_type | INT |  | NOT NULL |
+| orders | transaction_moment | DATETIME |  | NOT NULL |
+| orders | amount | INT |  | NOT NULL |
 
-### Ключі й перевірки
-| Таблиця | UNIQUE / CHECK |
-|---|---|
-| subscriber | UNIQUE(phone_number) |
-| tariff | UNIQUE(tariff_name); monthly_fee >= 0; speed_mbps > 0; is_active IN (0, 1) |
-| contract | UNIQUE(contract_number); ends_on IS NULL OR ends_on >= starts_on; status IN ('active','suspended','closed') |
-| service | UNIQUE(service_name); monthly_fee >= 0 |
-| contract_service | UNIQUE(contract_id, service_id, activated_on); deactivated_on IS NULL OR deactivated_on >= activated_on |
-| payment | UNIQUE(reference_code); amount > 0; payment_method IN ('cash','card','bank_transfer') |
-| support_ticket | status IN ('open','in_progress','closed'); closed_at IS NULL OR closed_at >= opened_at; (status = 'closed' AND closed_at IS NOT NULL) OR (status <> 'closed' AND closed_at IS NULL) |
+### Зовнішні ключі
+| Зовнішній ключ | Батьківський ключ | Видалення / оновлення |
+|---|---|---|
+| employee.department_id | department.department_id | RESTRICT / RESTRICT |
+| employee.manager_id | employee.employee_id | RESTRICT / RESTRICT |
+| orders.employee_id | employee.employee_id | RESTRICT / RESTRICT |
+| orders.product_id | product.product_id | RESTRICT / RESTRICT |
+| orders.customer_id | customer.customer_id | RESTRICT / RESTRICT |
 
-Всі FK мають ON DELETE RESTRICT / ON UPDATE RESTRICT та індекси. Додатковий індекс payment.paid_at прискорює вибірку платежів за часом. Таблиця contract_service перетворює M:N між contract і service на два зв’язки 1:N. Всі інші зв’язки — 1:N.
-
-### Запуск
-1. Підключитися до MySQL-сервера у MySQL Workbench.
-2. Відкрити telecom_operator.sql через File → Open SQL Script і виконати повністю у новій порожній схемі.
-3. За бажанням виконати demo_data.sql (синтетичні навчальні дані).
-4. Виконати queries.sql для перегляду договорів, платежів, послуг і звернень.
+### Запуск скрипту
+1. Відкрийте MySQL Workbench і підключіться до свого MySQL-сервера.
+2. Виберіть File → Open SQL Script та відкрийте `company.sql`.
+3. Запустіть скрипт повністю. Він створить базу `company` та її таблиці.
+4. Оновіть SCHEMAS. Для перевірки виконайте:
 
 ```sql
-USE telecom_operator;
+USE company;
 SHOW TABLES;
-SHOW CREATE TABLE contract;
+SHOW CREATE TABLE `orders`;
 ```
 
-Скрипт створює базу та 7 таблиць, не містить DROP. Повторний запуск CREATE TABLE у вже заповненій схемі завершиться помилкою. Діаграми й SQL сформовано програмно; вони не є скріншотами або експортом із DBDesigner. Для діаграми у власному середовищі можна використати reverse engineering MySQL Workbench.
+Скрипт призначений для першого запуску у порожній схемі. Він не видаляє дані та не змінює існуючі таблиці. Повторне виконання CREATE TABLE для існуючої таблиці завершиться помилкою; для повторного запуску використайте іншу порожню схему.
 
-### Межі цілісності
-FK/UNIQUE/CHECK перевіряють посилання, унікальність, суми, локальні дати і статуси. Відсутність перетинів підключень послуги, коректність реального телефону/email і допустимість операцій із закритим договором перевіряються застосунком. Система обліковує платежі, але не розраховує історичну заборгованість: немає нарахувань і версій цін.
+Для отримання діаграми у власному середовищі виконайте reverse engineering створеної схеми у MySQL Workbench. До комплекту вже додано редаговану діаграму draw.io. Файли сформовано програмно; це не скріншоти DBDesigner і не експорт із нього. SQL є основним джерелом визначень; DBML — додатковий формат із типами та зв’язками, без дублювання всіх CHECK та DEFAULT.
 
-### Перевірка та висновок
-Структуру й обмеження перевірено після технічної адаптації DDL на SQLite: 7 коректних вставок пройшли; 6 операцій із порушеннями FK, UNIQUE, CHECK та RESTRICT відхилено. Це не є перевіркою імпорту у MySQL; MySQL-сервер у середовищі не запускався. Фізична схема зберігає всі атрибути логічної моделі та готова для імпорту й перевірки у MySQL.
+### Чому обрано ці типи
+INT використано для сумісних PK та FK. VARCHAR — для тексту; DATE — для календарних дат; DATETIME — для дати й часу події. DECIMAL зберігає грошові суми точно. AUTO_INCREMENT генерує сурогатні ідентифікатори; у зв’язувальній таблиці зі складеним PK він не потрібен. FK індексуються явно; UNIQUE та PK також створюють індекси.
 
-Джерело вимог: Lab 3(1).pdf, розділ «Домашнє завдання».
+### Уточнення до методички
+Збережено всі задані назви, включно з `genger` та `manufacture`. Таблиця employee містить 10 атрибутів із початкової моделі. `building_no`, `discount`, `department_id`, `manager_id`, `bonus` допускають NULL. `city` має DEFAULT 'Lviv'.
+
+Замість FLOAT для rate, bonus і price використано DECIMAL(12,2). Номер телефону — VARCHAR(20), щоб зберігати + і початкові нулі; перевірка конкретного телефонного формату залишається на рівні застосунку. Позначення integer(3), integer(12) та integer(2) зі слайда не означають обмеження кількості цифр, тому довжину INT не використано. transaction_type: 1 — готівка, 2 — картка, 3 — банківський переказ. Це навчальний словник кодів.
+
+CHECK обмежують знижку 0–100, невід’ємні ставки, бонуси, ціну і залишки, додатну кількість продажу, номер будинку та значення статі F/M за умовою. Ієрархію керівників без циклів, атомарне зменшення залишків та узгодженість дат повинен забезпечувати застосунок або окремі тригери. Історична ціна продажу в умові відсутня і не додавалася.
+
+### Перевірка і межі перевірки
+Таблиці, стовпці, PK і FK зіставлено між SQL та діаграмою. Додатково проведено локальні перевірки обмежень на SQLite після технічного перетворення MySQL DDL; докладні результати містяться у verification.md. MySQL-сервер у робочому середовищі відсутній, тому успішний імпорт саме у MySQL не заявляється. Після імпорту перевірте SHOW TABLES та SHOW CREATE TABLE.
+
+### Висновок
+Побудовано фізичну модель з конкретними типами, первинними та зовнішніми ключами. Додано індекси для зв’язків і пошуку за часом, а також обмеження цілісності рівня рядка. SQL-скрипт готовий для першого запуску у порожній схемі MySQL; діаграму можна редагувати у draw.io.
+
+### Джерела
+- Надана методичка Lab 3.pdf, слайди 2–4, 12–16.
+- [MySQL CREATE TABLE](https://dev.mysql.com/doc/refman/8.4/en/create-table.html).
+- [MySQL CHECK constraints](https://dev.mysql.com/doc/refman/8.0/en/create-table-check-constraints.html).
+
+### Завантаження на GitHub
+Завантажте весь вміст цієї папки до LAB-3 відповідного репозиторію. README.md, PNG, drawio, DBML та SQL повинні залишатися разом, щоб відносні посилання працювали.

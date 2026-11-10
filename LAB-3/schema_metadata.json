@@ -1,14 +1,146 @@
 {
-  "subscriber": {
+  "department": {
     "fields": [
       [
-        "subscriber_id",
+        "department_id",
         "INT",
         "NOT NULL AUTO_INCREMENT"
       ],
       [
-        "full_name",
-        "VARCHAR(120)",
+        "department_name",
+        "VARCHAR(30)",
+        "NOT NULL"
+      ],
+      [
+        "city",
+        "VARCHAR(30)",
+        "NOT NULL DEFAULT 'Lviv'"
+      ],
+      [
+        "street",
+        "VARCHAR(40)",
+        "NOT NULL"
+      ],
+      [
+        "building_no",
+        "INT",
+        "NULL"
+      ]
+    ],
+    "pk": [
+      "department_id"
+    ],
+    "fks": [],
+    "unique": [],
+    "checks": [
+      "building_no IS NULL OR building_no > 0"
+    ],
+    "indexes": []
+  },
+  "employee": {
+    "fields": [
+      [
+        "employee_id",
+        "INT",
+        "NOT NULL AUTO_INCREMENT"
+      ],
+      [
+        "user_name",
+        "VARCHAR(30)",
+        "NOT NULL"
+      ],
+      [
+        "first_name",
+        "VARCHAR(30)",
+        "NOT NULL"
+      ],
+      [
+        "last_name",
+        "VARCHAR(30)",
+        "NOT NULL"
+      ],
+      [
+        "position",
+        "VARCHAR(30)",
+        "NOT NULL"
+      ],
+      [
+        "employment_date",
+        "DATE",
+        "NOT NULL"
+      ],
+      [
+        "department_id",
+        "INT",
+        "NULL"
+      ],
+      [
+        "manager_id",
+        "INT",
+        "NULL"
+      ],
+      [
+        "rate",
+        "DECIMAL(12,2)",
+        "NOT NULL"
+      ],
+      [
+        "bonus",
+        "DECIMAL(12,2)",
+        "NULL"
+      ]
+    ],
+    "pk": [
+      "employee_id"
+    ],
+    "fks": [
+      [
+        "department_id",
+        "department",
+        "department_id"
+      ],
+      [
+        "manager_id",
+        "employee",
+        "employee_id"
+      ]
+    ],
+    "unique": [
+      [
+        "user_name"
+      ]
+    ],
+    "checks": [
+      "rate >= 0",
+      "bonus IS NULL OR bonus >= 0"
+    ],
+    "indexes": []
+  },
+  "customer": {
+    "fields": [
+      [
+        "customer_id",
+        "INT",
+        "NOT NULL AUTO_INCREMENT"
+      ],
+      [
+        "first_name",
+        "VARCHAR(30)",
+        "NOT NULL"
+      ],
+      [
+        "last_name",
+        "VARCHAR(30)",
+        "NOT NULL"
+      ],
+      [
+        "genger",
+        "CHAR(1)",
+        "NOT NULL"
+      ],
+      [
+        "birth_date",
+        "DATE",
         "NOT NULL"
       ],
       [
@@ -19,343 +151,146 @@
       [
         "email",
         "VARCHAR(254)",
-        "NULL"
+        "NOT NULL"
       ],
       [
-        "registered_on",
-        "DATE",
-        "NOT NULL"
+        "discount",
+        "DECIMAL(5,2)",
+        "NULL"
       ]
     ],
     "pk": [
-      "subscriber_id"
+      "customer_id"
     ],
     "fks": [],
-    "unique": [
-      [
-        "phone_number"
-      ]
+    "unique": [],
+    "checks": [
+      "genger IN ('F', 'M')",
+      "discount IS NULL OR discount BETWEEN 0 AND 100"
     ],
-    "checks": [],
     "indexes": []
   },
-  "tariff": {
+  "product": {
     "fields": [
       [
-        "tariff_id",
+        "product_id",
         "INT",
         "NOT NULL AUTO_INCREMENT"
       ],
       [
-        "tariff_name",
-        "VARCHAR(80)",
+        "product_name",
+        "VARCHAR(100)",
         "NOT NULL"
       ],
       [
-        "monthly_fee",
+        "product_description",
+        "VARCHAR(500)",
+        "NOT NULL"
+      ],
+      [
+        "category",
+        "VARCHAR(50)",
+        "NOT NULL"
+      ],
+      [
+        "manufacture",
+        "VARCHAR(100)",
+        "NOT NULL"
+      ],
+      [
+        "product_type",
+        "VARCHAR(50)",
+        "NOT NULL"
+      ],
+      [
+        "amount",
+        "INT",
+        "NOT NULL DEFAULT 0"
+      ],
+      [
+        "price",
         "DECIMAL(12,2)",
         "NOT NULL"
-      ],
-      [
-        "speed_mbps",
-        "INT",
-        "NOT NULL"
-      ],
-      [
-        "is_active",
-        "BOOLEAN",
-        "NOT NULL DEFAULT TRUE"
       ]
     ],
     "pk": [
-      "tariff_id"
+      "product_id"
     ],
     "fks": [],
-    "unique": [
-      [
-        "tariff_name"
-      ]
-    ],
+    "unique": [],
     "checks": [
-      "monthly_fee >= 0",
-      "speed_mbps > 0",
-      "is_active IN (0, 1)"
+      "amount >= 0",
+      "price >= 0"
     ],
     "indexes": []
   },
-  "contract": {
+  "orders": {
     "fields": [
       [
-        "contract_id",
+        "orders_id",
         "INT",
         "NOT NULL AUTO_INCREMENT"
       ],
       [
-        "subscriber_id",
+        "employee_id",
         "INT",
         "NOT NULL"
       ],
       [
-        "tariff_id",
+        "product_id",
         "INT",
         "NOT NULL"
       ],
       [
-        "contract_number",
-        "VARCHAR(30)",
-        "NOT NULL"
-      ],
-      [
-        "service_address",
-        "VARCHAR(200)",
-        "NOT NULL"
-      ],
-      [
-        "starts_on",
-        "DATE",
-        "NOT NULL"
-      ],
-      [
-        "ends_on",
-        "DATE",
-        "NULL"
-      ],
-      [
-        "status",
-        "VARCHAR(15)",
-        "NOT NULL DEFAULT 'active'"
-      ]
-    ],
-    "pk": [
-      "contract_id"
-    ],
-    "fks": [
-      [
-        "subscriber_id",
-        "subscriber",
-        "subscriber_id"
-      ],
-      [
-        "tariff_id",
-        "tariff",
-        "tariff_id"
-      ]
-    ],
-    "unique": [
-      [
-        "contract_number"
-      ]
-    ],
-    "checks": [
-      "ends_on IS NULL OR ends_on >= starts_on",
-      "status IN ('active','suspended','closed')"
-    ],
-    "indexes": []
-  },
-  "service": {
-    "fields": [
-      [
-        "service_id",
-        "INT",
-        "NOT NULL AUTO_INCREMENT"
-      ],
-      [
-        "service_name",
-        "VARCHAR(80)",
-        "NOT NULL"
-      ],
-      [
-        "monthly_fee",
-        "DECIMAL(12,2)",
-        "NOT NULL"
-      ],
-      [
-        "description",
-        "VARCHAR(300)",
-        "NOT NULL"
-      ]
-    ],
-    "pk": [
-      "service_id"
-    ],
-    "fks": [],
-    "unique": [
-      [
-        "service_name"
-      ]
-    ],
-    "checks": [
-      "monthly_fee >= 0"
-    ],
-    "indexes": []
-  },
-  "contract_service": {
-    "fields": [
-      [
-        "contract_service_id",
-        "INT",
-        "NOT NULL AUTO_INCREMENT"
-      ],
-      [
-        "contract_id",
+        "customer_id",
         "INT",
         "NOT NULL"
       ],
       [
-        "service_id",
+        "transaction_type",
         "INT",
         "NOT NULL"
       ],
       [
-        "activated_on",
-        "DATE",
-        "NOT NULL"
-      ],
-      [
-        "deactivated_on",
-        "DATE",
-        "NULL"
-      ]
-    ],
-    "pk": [
-      "contract_service_id"
-    ],
-    "fks": [
-      [
-        "contract_id",
-        "contract",
-        "contract_id"
-      ],
-      [
-        "service_id",
-        "service",
-        "service_id"
-      ]
-    ],
-    "unique": [
-      [
-        "contract_id",
-        "service_id",
-        "activated_on"
-      ]
-    ],
-    "checks": [
-      "deactivated_on IS NULL OR deactivated_on >= activated_on"
-    ],
-    "indexes": []
-  },
-  "payment": {
-    "fields": [
-      [
-        "payment_id",
-        "INT",
-        "NOT NULL AUTO_INCREMENT"
-      ],
-      [
-        "contract_id",
-        "INT",
-        "NOT NULL"
-      ],
-      [
-        "paid_at",
+        "transaction_moment",
         "DATETIME",
         "NOT NULL"
       ],
       [
         "amount",
-        "DECIMAL(12,2)",
-        "NOT NULL"
-      ],
-      [
-        "payment_method",
-        "VARCHAR(15)",
-        "NOT NULL"
-      ],
-      [
-        "reference_code",
-        "VARCHAR(80)",
+        "INT",
         "NOT NULL"
       ]
     ],
     "pk": [
-      "payment_id"
+      "orders_id"
     ],
     "fks": [
       [
-        "contract_id",
-        "contract",
-        "contract_id"
-      ]
-    ],
-    "unique": [
-      [
-        "reference_code"
-      ]
-    ],
-    "checks": [
-      "amount > 0",
-      "payment_method IN ('cash','card','bank_transfer')"
-    ],
-    "indexes": [
-      [
-        "paid_at"
-      ]
-    ]
-  },
-  "support_ticket": {
-    "fields": [
-      [
-        "ticket_id",
-        "INT",
-        "NOT NULL AUTO_INCREMENT"
+        "employee_id",
+        "employee",
+        "employee_id"
       ],
       [
-        "contract_id",
-        "INT",
-        "NOT NULL"
+        "product_id",
+        "product",
+        "product_id"
       ],
       [
-        "opened_at",
-        "DATETIME",
-        "NOT NULL"
-      ],
-      [
-        "subject",
-        "VARCHAR(150)",
-        "NOT NULL"
-      ],
-      [
-        "description",
-        "VARCHAR(1000)",
-        "NOT NULL"
-      ],
-      [
-        "status",
-        "VARCHAR(15)",
-        "NOT NULL DEFAULT 'open'"
-      ],
-      [
-        "closed_at",
-        "DATETIME",
-        "NULL"
-      ]
-    ],
-    "pk": [
-      "ticket_id"
-    ],
-    "fks": [
-      [
-        "contract_id",
-        "contract",
-        "contract_id"
+        "customer_id",
+        "customer",
+        "customer_id"
       ]
     ],
     "unique": [],
     "checks": [
-      "status IN ('open','in_progress','closed')",
-      "closed_at IS NULL OR closed_at >= opened_at",
-      "(status = 'closed' AND closed_at IS NOT NULL) OR (status <> 'closed' AND closed_at IS NULL)"
+      "amount > 0",
+      "transaction_type IN (1, 2, 3)"
     ],
-    "indexes": []
+    "indexes": [
+      [
+        "transaction_moment"
+      ]
+    ]
   }
 }

@@ -1,0 +1,61 @@
+Table department {
+  department_id int [pk, increment, not null]
+  department_name varchar(30) [not null]
+  city varchar(30) [not null]
+  street varchar(40) [not null]
+  building_no int [null]
+}
+
+Table employee {
+  employee_id int [pk, increment, not null]
+  user_name varchar(30) [not null]
+  first_name varchar(30) [not null]
+  last_name varchar(30) [not null]
+  position varchar(30) [not null]
+  employment_date date [not null]
+  department_id int [null]
+  manager_id int [null]
+  rate decimal(12,2) [not null]
+  bonus decimal(12,2) [null]
+  indexes {
+    (user_name) [unique]
+  }
+}
+
+Table customer {
+  customer_id int [pk, increment, not null]
+  first_name varchar(30) [not null]
+  last_name varchar(30) [not null]
+  genger char(1) [not null]
+  birth_date date [not null]
+  phone_number varchar(20) [not null]
+  email varchar(254) [not null]
+  discount decimal(5,2) [null]
+}
+
+Table product {
+  product_id int [pk, increment, not null]
+  product_name varchar(100) [not null]
+  product_description varchar(500) [not null]
+  category varchar(50) [not null]
+  manufacture varchar(100) [not null]
+  product_type varchar(50) [not null]
+  amount int [not null]
+  price decimal(12,2) [not null]
+}
+
+Table orders {
+  orders_id int [pk, increment, not null]
+  employee_id int [not null]
+  product_id int [not null]
+  customer_id int [not null]
+  transaction_type int [not null]
+  transaction_moment datetime [not null]
+  amount int [not null]
+}
+
+Ref: employee.department_id > department.department_id
+Ref: employee.manager_id > employee.employee_id
+Ref: orders.employee_id > employee.employee_id
+Ref: orders.product_id > product.product_id
+Ref: orders.customer_id > customer.customer_id
